@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Study For Methodxxx</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .case-block { margin-bottom: 32px; border: 1px solid #ccc; padding: 16px; border-radius: 8px; }
+        .case-title { font-weight: bold; margin-bottom: 12px; }
+        .videos {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .video-item {
+            flex: 1 1 320px;
+            min-width: 260px;
+            max-width: 500px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        select {
+            font-size: 14px;
+            padding: 4px 6px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            background: #fff;
+            color: #333;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: none;
+        }
+        select:focus {
+            border: 1.5px solid #888;
+            box-shadow: 0 0 4px #e0e0e0;
+        }
+        label {
+            font-size: 15px;
+            color: #444;
+            font-weight: 500;
+        }
+        .submit-btn { font-size: 18px; padding: 10px 30px; margin-top: 30px; }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            max-width: 500px;
+        }
+        .small-video {
+            max-width: 380px !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Study For Methodxxx</h1>
+    <div style="color: #000000; font-size: 18px; margin-bottom: 18px;">
+        Notice:<br>
+        1. There are 3 videos under each case, labeled A, B, and C, but the algorithm for each letter is randomized.<br>
+        2. Please rank each video (1st, 2nd, 3rd), each rank can only be used once per case.<br>
+        3. Please evaluate based on: <b>xxxx</b> and the <b>xxxxxxxx</b>.<br>
+        4. Click "Submit" after you finish all rankings.<br>
+        5. Submission cannot be changed, please fill carefully.
+    </div>
+    <form id="userStudyForm">
+        <div id="casesContainer"></div>
+        <div style="text-align:center;">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+    </form>
+    <script>
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+        const algorithms = ['Method3', 'Method1', 'Method2'];
+        const algoFolderMap = { 'Method3': 'Method3', 'Method1': 'Method1', 'Method2': 'Method2' };
+        const videoNameList = [
+            'case-1',
+            'case-2',
+            'case-3',
+            'case-4',
+            'case-5',
+            'case-6',
+            'case-7',
+            'case-8',
+            'case-9',
+            'case-10'
+        ];
+        const cases = Array.from({length: videoNameList.length}, (_, i) => `Case-${i+1}`);
+        const casesContainer = document.getElementById('casesContainer');
+        const caseAlgoMaps = [];
+        cases.forEach((caseName, idx) => {
+            const algoOrder = shuffle(['A', 'B', 'C']);
+            const algoMap = {};
+            shuffle([...algorithms]).forEach((alg, i) => algoMap[algoOrder[i]] = alg);
+            caseAlgoMaps.push({...algoMap});
+            const block = document.createElement('div');
+            block.className = 'case-block';
+            block.innerHTML = `<div class="case-title">${caseName}</div>`;
+            // Original video button and player
+            const videoName = videoNameList[idx];
+            const originalDiv = document.createElement('div');
+            originalDiv.style = 'margin-bottom: 10px; text-align: center;';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = 'Show Original Video';
+            btn.style = [
+                'margin-bottom: 8px;',
+                'padding: 6px 18px;',
+                'font-size: 14px;',
+                'border: 1px solid #ddd;',
+                'border-radius: 6px;',
+                'background: #fff;',
+                'color: #333;',
+                'cursor: pointer;',
+                'transition: background 0.2s, border 0.2s;',
+                'box-shadow: none;',
+                'outline: none;'
+            ].join(' ');
+            btn.onmouseover = function() {
+                btn.style.background = '#f5f5f5';
+                btn.style.border = '1.5px solid #bbb';
+            };
+            btn.onmouseout = function() {
+                btn.style.background = '#fff';
+                btn.style.border = '1px solid #ddd';
+            };
+            const oriVideo = document.createElement('video');
+            oriVideo.style.display = 'none';
+            oriVideo.controls = true;
+            oriVideo.addEventListener('loadedmetadata', function() {
+                if (oriVideo.videoWidth > oriVideo.videoHeight) {
+                    oriVideo.width = 500;
+                } else {
+                    oriVideo.width = 400;
+                }
+            });
+            if (videoName.includes('dance') || videoName.includes('HPW') || videoName.includes('running')) {
+                oriVideo.classList.add('small-video');
+            }
+            oriVideo.width = 500;
+            oriVideo.innerHTML = `<source src="videos/original/${videoName}.mp4" type="video/mp4">Your browser does not support the video tag.`;
+            btn.addEventListener('click', () => {
+                if (oriVideo.style.display === 'none') {
+                    oriVideo.style.display = '';
+                    btn.textContent = 'Hide Original Video';
+                } else {
+                    oriVideo.style.display = 'none';
+                    btn.textContent = 'Show Original Video';
+                }
+            });
+            originalDiv.appendChild(btn);
+            originalDiv.appendChild(document.createElement('br'));
+            originalDiv.appendChild(oriVideo);
+            block.appendChild(originalDiv);
+            const videosDiv = document.createElement('div');
+            videosDiv.className = 'videos';
+            algoOrder.forEach((label, i) => {
+                const videoDiv = document.createElement('div');
+                videoDiv.className = 'video-item';
+                const algo = algoMap[label];
+                videoDiv.setAttribute('data-algo', algo);
+                const folder = algoFolderMap[algo];
+                const videoName = videoNameList[idx];
+                let extraClass = 'dance';
+                if (videoName.includes('dance') || videoName.includes('HPW') || videoName.includes('running')) {
+                    extraClass = ' small-video';
+                }
+                const videoId = `algo_video_${idx}_${i}`;
+                let rankLabel = 'Rank:';
+                let option1 = '1st';
+                let option2 = '2nd';
+                let option3 = '3rd';
+                let videoLabel = `Video ${['A','B','C'][i]}`;
+                videoDiv.innerHTML = `
+                    <div>${videoLabel}</div>
+                    <video id="${videoId}" class="algo-video${extraClass}" controls>
+                        <source src="videos/${folder}/${videoName}.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div>
+                        <label>${rankLabel}
+                            <select name="case${idx+1}_${label}" required>
+                                <option value="">Please select</option>
+                                <option value="1">${option1}</option>
+                                <option value="2">${option2}</option>
+                                <option value="3">${option3}</option>
+                            </select>
+                        </label>
+                    </div>
+                `;
+                setTimeout(() => {
+                    const algoVideo = document.getElementById(videoId);
+                    if (algoVideo) {
+                        algoVideo.addEventListener('loadedmetadata', function() {
+                            if (algoVideo.videoWidth > algoVideo.videoHeight) {
+                                algoVideo.width = 500;
+                            } else {
+                                algoVideo.width = 400;
+                            }
+                        });
+                    }
+                }, 0);
+                videosDiv.appendChild(videoDiv);
+            });
+            block.appendChild(videosDiv);
+            casesContainer.appendChild(block);
+        });
+        document.querySelectorAll('.case-block').forEach(block => {
+            const selects = block.querySelectorAll('select');
+            selects.forEach(sel => {
+                sel.addEventListener('change', () => {
+                    const values = Array.from(selects).map(s => s.value).filter(v => v);
+                    selects.forEach(s => {
+                        Array.from(s.options).forEach(opt => {
+                            if(opt.value && values.includes(opt.value) && s.value !== opt.value) {
+                                opt.disabled = true;
+                            } else {
+                                opt.disabled = false;
+                            }
+                        });
+                    });
+                });
+            });
+        });
+        document.getElementById('userStudyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {};
+            cases.forEach((caseName, idx) => {
+                const algoRank = {};
+                ['A','B','C'].forEach(label => {
+                    const sel = document.querySelector(`[name=case${idx+1}_${label}]`);
+                    const algo = caseAlgoMaps[idx][label];
+                    algoRank[algo] = sel.value;
+                });
+                const sortedAlgoRank = Object.keys(algoRank).sort().reduce((acc, key) => {
+                    acc[key] = algoRank[key];
+                    return acc;
+                }, {});
+                data[caseName] = sortedAlgoRank;
+            });
+            fetch('/save_result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    alert('Thank you for your participation!\nYour ranking has been submitted.');
+                    window.location.reload();
+                } else {
+                    alert('Submission failed, please try again.');
+                }
+            }).catch(() => {
+                alert('Submission failed, please check your network or contact the administrator.');
+            });
+            console.log(data);
+        });
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.style.background = '#fff';
+            submitBtn.style.color = '#333';
+            submitBtn.style.border = '1px solid #ddd';
+            submitBtn.style.borderRadius = '6px';
+            submitBtn.style.boxShadow = 'none';
+            submitBtn.style.transition = 'background 0.2s, border 0.2s';
+            submitBtn.onmouseover = function() {
+                submitBtn.style.background = '#f5f5f5';
+                submitBtn.style.border = '1.5px solid #bbb';
+            };
+            submitBtn.onmouseout = function() {
+                submitBtn.style.background = '#fff';
+                submitBtn.style.border = '1px solid #ddd';
+            };
+        }
+    </script>
+</body>
+</html>

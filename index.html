@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>User Study For Methodxxx</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .case-block { margin-bottom: 32px; border: 1px solid #ccc; padding: 16px; border-radius: 8px; }
+        .case-title { font-weight: bold; margin-bottom: 12px; }
+        .videos {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .video-item {
+            flex: 1 1 320px;
+            min-width: 260px;
+            max-width: 500px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        select {
+            font-size: 14px;
+            padding: 4px 6px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            background: #fff;
+            color: #333;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: none;
+        }
+        select:focus {
+            border: 1.5px solid #888;
+            box-shadow: 0 0 4px #e0e0e0;
+        }
+        label {
+            font-size: 15px;
+            color: #444;
+            font-weight: 500;
+        }
+        .submit-btn { font-size: 18px; padding: 10px 30px; margin-top: 30px; }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            max-width: 500px;
+        }
+        .small-video {
+            max-width: 380px !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Study For Methodxxx</h1>
+    <div style="color: #000000; font-size: 18px; margin-bottom: 18px;">
+        注意事项：<br>
+        1. 每个Case下有3个视频，顺序为A、B、C，但每个字母对应的算法是随机的。<br>
+        2. 请根据您的主观感受为每个视频选择排序（第一名、第二名、第三名）。<br>
+        3. 请根据以下标准进行评价：<b>xxx</b>的改善程度，以及<b>xxxx</b>的xxxxx。<br>
+        4. 所有排序填写完毕后再点击“提交”。<br>
+        5. 提交后不可更改，请认真填写。
+    </div>
+    <form id="userStudyForm">
+        <div id="casesContainer"></div>
+        <div style="text-align:center;">
+            <button type="submit" class="submit-btn">提交</button>
+        </div>
+    </form>
+    <script>
+        // 随机分配算法到A/B/C
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // 算法与文件夹名映射
+        const algorithms = ['Method3', 'Method1', 'Method2'];
+        const algoFolderMap = { 'Method3': 'Method3', 'Method1': 'Method1', 'Method2': 'Method2' };
+        // n个视频名，顺序与case一一对应
+        const videoNameList = [
+            'case-1',
+            'case-2',
+            'case-3',
+            'case-4',
+            'case-5',
+            'case-6',
+            'case-7',
+            'case-8',
+            'case-9',
+            'case-10'
+        ];
+        const cases = Array.from({length: videoNameList.length}, (_, i) => `Case-${i+1}`);
+        const casesContainer = document.getElementById('casesContainer');
+        const caseAlgoMaps = [];
+
+        cases.forEach((caseName, idx) => {
+            const algoOrder = shuffle(['A', 'B', 'C']);
+            const algoMap = {};
+            shuffle([...algorithms]).forEach((alg, i) => algoMap[algoOrder[i]] = alg);
+            caseAlgoMaps.push({...algoMap});
+
+            const block = document.createElement('div');
+            block.className = 'case-block';
+            block.innerHTML = `<div class="case-title">${caseName}</div>`;
+            const videoName = videoNameList[idx];
+            const originalDiv = document.createElement('div');
+            originalDiv.style = 'margin-bottom: 10px; text-align: center;';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = '查看原视频';
+            btn.style = [
+                'margin-bottom: 8px;',
+                'padding: 6px 18px;',
+                'font-size: 14px;',
+                'border: 1px solid #ddd;',
+                'border-radius: 6px;',
+                'background: #fff;',
+                'color: #333;',
+                'cursor: pointer;',
+                'transition: background 0.2s, border 0.2s;',
+                'box-shadow: none;',
+                'outline: none;'
+            ].join(' ');
+            btn.onmouseover = function() {
+                btn.style.background = '#f5f5f5';
+                btn.style.border = '1.5px solid #bbb';
+            };
+            btn.onmouseout = function() {
+                btn.style.background = '#fff';
+                btn.style.border = '1px solid #ddd';
+            };
+            const oriVideo = document.createElement('video');
+            oriVideo.style.display = 'none';
+            oriVideo.controls = true;
+            oriVideo.addEventListener('loadedmetadata', function() {
+                if (oriVideo.videoWidth > oriVideo.videoHeight) {
+                    oriVideo.width = 500;
+                } else {
+                    oriVideo.width = 400;
+                }
+            });
+            if (videoName.includes('dance') || videoName.includes('HPW') || videoName.includes('running')) {
+                oriVideo.classList.add('small-video');
+            }
+            oriVideo.width = 500;
+            oriVideo.innerHTML = `<source src="videos/original/${videoName}.mp4" type="video/mp4">您的浏览器不支持 video 标签。`;
+            btn.addEventListener('click', () => {
+                if (oriVideo.style.display === 'none') {
+                    oriVideo.style.display = '';
+                    btn.textContent = '隐藏原视频';
+                } else {
+                    oriVideo.style.display = 'none';
+                    btn.textContent = '查看原视频';
+                }
+            });
+            originalDiv.appendChild(btn);
+            originalDiv.appendChild(document.createElement('br'));
+            originalDiv.appendChild(oriVideo);
+            block.appendChild(originalDiv);
+            const videosDiv = document.createElement('div');
+            videosDiv.className = 'videos';
+            algoOrder.forEach((label, i) => {
+                const videoDiv = document.createElement('div');
+                videoDiv.className = 'video-item';
+                const algo = algoMap[label];
+                videoDiv.setAttribute('data-algo', algo);
+                const folder = algoFolderMap[algo];
+                const videoName = videoNameList[idx];
+                let extraClass = 'dance';
+                if (videoName.includes('dance') || videoName.includes('HPW') || videoName.includes('running')) {
+                    extraClass = ' small-video';
+                }
+                const videoId = `algo_video_${idx}_${i}`;
+                videoDiv.innerHTML = `
+                    <div>视频 ${['A','B','C'][i]}</div>
+                    <video id="${videoId}" class="algo-video${extraClass}" controls>
+                        <source src="videos/${folder}/${videoName}.mp4" type="video/mp4">
+                        您的浏览器不支持 video 标签。
+                    </video>
+                    <div>
+                        <label>排序: 
+                            <select name="case${idx+1}_${label}" required>
+                                <option value="">请选择</option>
+                                <option value="1">第一名</option>
+                                <option value="2">第二名</option>
+                                <option value="3">第三名</option>
+                            </select>
+                        </label>
+                    </div>
+                `;
+                setTimeout(() => {
+                    const algoVideo = document.getElementById(videoId);
+                    if (algoVideo) {
+                        algoVideo.addEventListener('loadedmetadata', function() {
+                            if (algoVideo.videoWidth > algoVideo.videoHeight) {
+                                algoVideo.width = 500;
+                            } else {
+                                algoVideo.width = 400;
+                            }
+                        });
+                    }
+                }, 0);
+                videosDiv.appendChild(videoDiv);
+            });
+            block.appendChild(videosDiv);
+            casesContainer.appendChild(block);
+        });
+
+        document.querySelectorAll('.case-block').forEach(block => {
+            const selects = block.querySelectorAll('select');
+            selects.forEach(sel => {
+                sel.addEventListener('change', () => {
+                    const values = Array.from(selects).map(s => s.value).filter(v => v);
+                    selects.forEach(s => {
+                        Array.from(s.options).forEach(opt => {
+                            if(opt.value && values.includes(opt.value) && s.value !== opt.value) {
+                                opt.disabled = true;
+                            } else {
+                                opt.disabled = false;
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
+        document.getElementById('userStudyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = {};
+            cases.forEach((caseName, idx) => {
+                const algoRank = {};
+                ['A','B','C'].forEach(label => {
+                    const sel = document.querySelector(`[name=case${idx+1}_${label}]`);
+                    const algo = caseAlgoMaps[idx][label];
+                    algoRank[algo] = sel.value;
+                });
+                const sortedAlgoRank = Object.keys(algoRank).sort().reduce((acc, key) => {
+                    acc[key] = algoRank[key];
+                    return acc;
+                }, {});
+                data[caseName] = sortedAlgoRank;
+            });
+            fetch('/save_result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    alert('感谢您的参与！\n您的排序结果已提交到服务器。');
+                    window.location.reload(); // 提交成功后刷新页面，防止重复提交
+                } else {
+                    alert('提交失败，请重试。');
+                }
+            }).catch(() => {
+                alert('提交失败，请检查网络或联系管理员。');
+            });
+            console.log(data);
+        });
+
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.style.background = '#fff';
+            submitBtn.style.color = '#333';
+            submitBtn.style.border = '1px solid #ddd';
+            submitBtn.style.borderRadius = '6px';
+            submitBtn.style.boxShadow = 'none';
+            submitBtn.style.transition = 'background 0.2s, border 0.2s';
+            submitBtn.onmouseover = function() {
+                submitBtn.style.background = '#f5f5f5';
+                submitBtn.style.border = '1.5px solid #bbb';
+            };
+            submitBtn.onmouseout = function() {
+                submitBtn.style.background = '#fff';
+                submitBtn.style.border = '1px solid #ddd';
+            };
+        }
+    </script>
+</body>
+</html>
