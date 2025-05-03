@@ -1,7 +1,11 @@
 
 # User-Study For Methodxxx
 
-This repo is a simple user study for subjective evaluation of different algorithms (Method1, Method2, Method3) based on video comparison and ranking. It provides a web interface for users to rank videos, collects results, and offers scripts for result analysis and video compression.
+This project is a user study system for subjective evaluation of different algorithms (Method1, Method2, Method3) based on video comparison and ranking. It provides a web interface for users to rank videos, collects results, and offers scripts for result analysis and video compression.
+
+🖼️Demo without backend: [https://plus-wave.github.io/User-Study-For-Methodxxx/](https://plus-wave.github.io/User-Study-For-Methodxxx/)
+
+<img src="https://raw.githubusercontent.com/PLUS-WAVE/blog-image/master/img/blog/2025-05-03/image-20250503190537614.png" alt="image-20250503190537614" style="zoom:50%;" />
 
 ## Directory Structure
 
@@ -72,6 +76,53 @@ python compress.py
 
 You can adjust compression quality and scaling factor in the script.
 
+## Simple Server Deployment Guide
+Refer to [My Blog](https://plus-wave.github.io/experience/2ad86rya/)
+1. **Install nginx** (if not already installed):
+
+   ```bash
+   sudo apt update
+   sudo apt install nginx
+   ```
+
+2. **Edit nginx configuration**:
+    Open the nginx configuration file:
+   
+   ```bash
+   sudo vim /etc/nginx/sites-available/default
+   ```
+   
+    Replace the `server` block with the following (adjust the `root` path as needed):
+   
+   ```
+   server {
+       listen 80;
+        server_name your_server_ip_or_domain;
+   
+       root /home/User-Study-For-Methodxxx;
+        index index.html;
+   
+       location / {
+           try_files $uri $uri/ =404;
+        }
+   
+       location /save_result {
+           proxy_pass http://127.0.0.1:5000/save_result;
+           proxy_set_header Host $host;
+           proxy_set_header X-Real-IP $remote_addr;
+       }
+   }
+   ```
+   
+3. **Restart nginx:**
+
+   ```bash
+   sudo systemctl restart nginx
+   ```
+
+**Test:** 
+Visit `http://your_server_ip/` in your browser. You should see the `index.html` page.
+
 ## Notes
 
 - Ensure all video files are present and named consistently across all method folders and `original/`.
@@ -79,4 +130,4 @@ You can adjust compression quality and scaling factor in the script.
 
 ---
 
-For English interface, use `index_en.html`.
+For English interface, refer to `index_en.html`.
