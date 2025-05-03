@@ -1,7 +1,7 @@
 
 # User-Study For Methodxxx
 
-This project is a user study system for subjective evaluation of different algorithms (Method1, Method2, Method3) based on video comparison and ranking. It provides a web interface for users to rank videos, collects results, and offers scripts for result analysis and video compression.
+This repo is a simple user study for subjective evaluation of different algorithms (Method1, Method2, Method3) based on video comparison and ranking. It provides a web interface for users to rank videos, collects results, and offers scripts for result analysis and video compression.
 
 🖼️Demo without backend: [https://plus-wave.github.io/User-Study-For-Methodxxx/](https://plus-wave.github.io/User-Study-For-Methodxxx/)
 
