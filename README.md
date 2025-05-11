@@ -97,10 +97,10 @@ Refer to [My Blog](https://plus-wave.github.io/experience/21d156j9/)
    ```
    server {
        listen 80;
-        server_name your_server_ip_or_domain;
+       server_name your_server_ip_or_domain;
    
        root /home/User-Study-For-Methodxxx;
-        index index.html;
+       index index.html;
    
        location / {
            try_files $uri $uri/ =404;
