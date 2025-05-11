@@ -77,7 +77,7 @@ python compress.py
 You can adjust compression quality and scaling factor in the script.
 
 ## Simple Server Deployment Guide
-Refer to [My Blog](https://plus-wave.github.io/experience/2ad86rya/)
+Refer to [My Blog](https://plus-wave.github.io/experience/21d156j9/)
 1. **Install nginx** (if not already installed):
 
    ```bash
